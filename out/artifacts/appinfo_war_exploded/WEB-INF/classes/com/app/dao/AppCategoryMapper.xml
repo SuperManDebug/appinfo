@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.dao.AppCategoryDao">
+  <resultMap id="BaseResultMap" type="com.app.pojo.AppCategory">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="categoryCode" jdbcType="VARCHAR" property="categorycode" />
+    <result column="categoryName" jdbcType="VARCHAR" property="categoryname" />
+    <result column="parentId" jdbcType="BIGINT" property="parentid" />
+    <result column="createdBy" jdbcType="BIGINT" property="createdby" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationtime" />
+    <result column="modifyBy" jdbcType="BIGINT" property="modifyby" />
+    <result column="modifyDate" jdbcType="TIMESTAMP" property="modifydate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, categoryCode, categoryName, parentId, createdBy, creationTime, modifyBy, modifyDate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_category
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selAppList" resultType="AppCategory">
+  	SELECT *FROM `app_category` WHERE id IN(1,2)
+  </select>
+  
+  <select id="selLeven2List" resultType="AppCategory">
+  	SELECT * FROM `app_category` WHERE parentId = #{parentid}
+  </select>
+</mapper>

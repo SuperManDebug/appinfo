@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.dao.AppInfoDao">
+  <resultMap id="BaseResultMap" type="com.app.pojo.AppInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="softwareName" jdbcType="VARCHAR" property="softwarename" />
+    <result column="APKName" jdbcType="VARCHAR" property="apkname" />
+    <result column="supportROM" jdbcType="VARCHAR" property="supportrom" />
+    <result column="interfaceLanguage" jdbcType="VARCHAR" property="interfacelanguage" />
+    <result column="softwareSize" jdbcType="DECIMAL" property="softwaresize" />
+    <result column="updateDate" jdbcType="DATE" property="updatedate" />
+    <result column="devId" jdbcType="BIGINT" property="devid" />
+    <result column="appInfo" jdbcType="VARCHAR" property="appinfo" />
+    <result column="status" jdbcType="BIGINT" property="status" />
+    <result column="onSaleDate" jdbcType="TIMESTAMP" property="onsaledate" />
+    <result column="offSaleDate" jdbcType="TIMESTAMP" property="offsaledate" />
+    <result column="flatformId" jdbcType="BIGINT" property="flatformid" />
+    <result column="categoryLevel3" jdbcType="BIGINT" property="categorylevel3" />
+    <result column="downloads" jdbcType="BIGINT" property="downloads" />
+    <result column="createdBy" jdbcType="BIGINT" property="createdby" />
+    <result column="creationDate" jdbcType="TIMESTAMP" property="creationdate" />
+    <result column="modifyBy" jdbcType="BIGINT" property="modifyby" />
+    <result column="modifyDate" jdbcType="TIMESTAMP" property="modifydate" />
+    <result column="categoryLevel1" jdbcType="BIGINT" property="categorylevel1" />
+    <result column="categoryLevel2" jdbcType="BIGINT" property="categorylevel2" />
+    <result column="logoPicPath" jdbcType="VARCHAR" property="logopicpath" />
+    <result column="logoLocPath" jdbcType="VARCHAR" property="logolocpath" />
+    <result column="versionId" jdbcType="BIGINT" property="versionid" />
+    
+    <association property="apps" javaType="Apps">
+		<result column="flatformname" property="flatformname" />
+		<result column="categorylevel1name" property="categorylevel1name" />
+		<result column="categorylevel2name" property="categorylevel2name" />
+		<result column="categorylevel3name" property="categorylevel3name" />
+		<result column="statusname" property="statusname" />
+		<result column="versionno" property="versionno" />
+	</association>
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, softwareName, APKName, supportROM, interfaceLanguage, softwareSize, updateDate, 
+    devId, appInfo, status, onSaleDate, offSaleDate, flatformId, categoryLevel3, downloads, 
+    createdBy, creationDate, modifyBy, modifyDate, categoryLevel1, categoryLevel2, logoPicPath, 
+    logoLocPath, versionId
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selAppInfoList" resultMap="BaseResultMap">
+	  SELECT ai.*,
+	  (SELECT dd.valuename FROM `data_dictionary` dd WHERE ai.`flatformId`=dd.`valueId` AND dd.typecode='APP_FLATFORM') flatformname,
+	  (SELECT ac.`categoryName` FROM `app_category` ac WHERE  ai.`categoryLevel1` = ac.id)  categorylevel1name,
+	  (SELECT ac.`categoryName` FROM `app_category` ac WHERE  ai.`categoryLevel2` = ac.id)  categorylevel2name,
+	  (SELECT ac.`categoryName` FROM `app_category` ac WHERE  ai.`categoryLevel3` = ac.id)  categorylevel3name,
+	  (SELECT dd.valuename FROM `data_dictionary` dd WHERE ai.`status`=dd.`valueId` AND dd.typecode='app_status') statusname,
+	  (SELECT av.`versionNo` FROM `app_version` av WHERE ai.versionId=av.id) versionno
+	  FROM `app_info` ai
+	<where>
+		<if test="appInfo.softwarename!=null and appInfo.softwarename!=''">
+			softwareName LIKE CONCAT('%',#{appInfo.softwarename},'%')
+		</if>
+		<if test="appInfo.flatformid!=null and appInfo.flatformid!=0">
+			AND flatformId = #{appInfo.flatformid}
+		</if>
+		<if test="appInfo.status!=null and appInfo.status!=0">
+			AND status = #{appInfo.status}
+		</if>
+		<if test="appInfo.categorylevel1!=null and appInfo.categorylevel1!=0">
+			AND categoryLevel1 = #{appInfo.categorylevel1}
+		</if>
+		<if test="appInfo.categorylevel2!=null and appInfo.categorylevel2!=0">
+			AND categoryLevel2 = #{appInfo.categorylevel2}
+		</if>
+		<if test="appInfo.categorylevel3!=null and appInfo.categorylevel3!=0">
+			AND categoryLevel3 = #{appInfo.categorylevel3}
+		</if>
+	</where>
+	limit #{currentPage},#{pageSize}
+  </select>
+  
+  <select id="totalCount" resultType="java.lang.Integer">
+  	SELECT count(*)	FROM `app_info`	
+	<where>
+		<if test="softwarename!=null and softwarename!=''">
+			softwareName LIKE CONCAT('%',#{softwarename},'%')
+		</if>
+		<if test="flatformid!=null and flatformid!=0">
+			AND flatformId = #{flatformid}
+		</if>
+		<if test="categorylevel1!=null and categorylevel1!=0">
+			AND categoryLevel1 = #{categorylevel1}
+		</if>
+		<if test="categorylevel2!=null and categorylevel2!=0">
+			AND categoryLevel2 = #{categorylevel2}
+		</if>
+		<if test="categorylevel3!=null and categorylevel3!=0">
+			AND categoryLevel3 = #{categorylevel3}
+		</if>
+	</where>
+  </select>
+
+	<select id="findAppInfo" resultMap="BaseResultMap">
+		SELECT ai.*,
+		(SELECT dd.valuename FROM `data_dictionary` dd WHERE ai.`flatformId`=dd.`valueId` AND dd.typecode='APP_FLATFORM') flatformname,
+		(SELECT ac.`categoryName` FROM `app_category` ac WHERE  ai.`categoryLevel1` = ac.id)  categorylevel1name,
+		(SELECT ac.`categoryName` FROM `app_category` ac WHERE  ai.`categoryLevel2` = ac.id)  categorylevel2name,
+		(SELECT ac.`categoryName` FROM `app_category` ac WHERE  ai.`categoryLevel3` = ac.id)  categorylevel3name,
+		(SELECT dd.valuename FROM `data_dictionary` dd WHERE ai.`status`=dd.`valueId` AND dd.typecode='app_status') statusname,
+		(SELECT av.`versionNo` FROM `app_version` av WHERE ai.versionId=av.id) versionno
+		FROM `app_info`	ai WHERE id=#{aid}
+	</select>
+
+	<update id="upAppType">
+		update app_info SET STATUS = #{status} WHERE id= #{id}
+	</update>
+
+	<update id="upAppInfoVid">
+		UPDATE `app_info` ai SET ai.versionid =
+			(SELECT MAX(av.id) FROM app_version av WHERE av.`appId` = ai.`id`)
+		WHERE ai.id = #{id}
+	</update>
+
+
+	<select id="selCheckName" resultMap="BaseResultMap">
+		select * from app_info where apkname = #{apkname}
+	</select>
+
+	<insert id="insAppInfo">
+		insert into app_info values(DEFAULT ,#{softwarename},#{apkname},#{supportrom},
+		#{interfacelanguage},#{softwaresize},null,#{devid},#{appinfo},#{status},null,null,
+		#{flatformid},#{categorylevel3},#{downloads},#{createdby},now(),null,null,#{categorylevel1},#{categorylevel2},
+		#{logopicpath},#{logolocpath},null)
+	</insert>
+
+	<delete id="delAppInfo">
+		delete from app_info where id = #{id}
+	</delete>
+
+	<update id="upAppInfoLogo">
+		update app_info set logoLocPath = NULL ,logoPicPath = NULL WHERE  id = #{id}
+	</update>
+
+	<update id="upAppInfo">
+		update app_info set softwarename=#{softwarename},supportrom=#{supportrom},
+		interfacelanguage=#{interfacelanguage},softwaresize=#{softwaresize},updatedate=now(),
+		appinfo=#{appinfo},flatformid = #{flatformid},categorylevel3=#{categorylevel3},
+		downloads = #{downloads},modifyby=#{modifyby},modifydate=now(),categorylevel1=#{categorylevel1},
+		categorylevel2=#{categorylevel2},logopicpath=#{logopicpath},logolocpath=#{logolocpath}
+		WHERE  id = #{id}
+	</update>
+
+</mapper>

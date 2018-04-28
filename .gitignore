@@ -1,0 +1,12 @@
+/out
+/*.iml
+/*.ipr
+/*.iws
+/.classpath
+/.factorypath
+/.idea
+/.project
+/.settings
+/resource/*.properties
+/resource/*.xml
+/WebRoot/WEB-INF/lib/*.jar

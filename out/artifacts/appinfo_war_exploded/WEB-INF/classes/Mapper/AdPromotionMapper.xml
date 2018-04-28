@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.dao.AdPromotionDao">
+  <resultMap id="BaseResultMap" type="com.app.pojo.AdPromotion">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="appId" jdbcType="BIGINT" property="appid" />
+    <result column="adPicPath" jdbcType="VARCHAR" property="adpicpath" />
+    <result column="adPV" jdbcType="BIGINT" property="adpv" />
+    <result column="carouselPosition" jdbcType="INTEGER" property="carouselposition" />
+    <result column="startTime" jdbcType="TIMESTAMP" property="starttime" />
+    <result column="endTime" jdbcType="TIMESTAMP" property="endtime" />
+    <result column="createdBy" jdbcType="BIGINT" property="createdby" />
+    <result column="creationDate" jdbcType="TIMESTAMP" property="creationdate" />
+    <result column="modifyBy" jdbcType="BIGINT" property="modifyby" />
+    <result column="modifyDate" jdbcType="TIMESTAMP" property="modifydate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, appId, adPicPath, adPV, carouselPosition, startTime, endTime, createdBy, creationDate, 
+    modifyBy, modifyDate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ad_promotion
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+</mapper>

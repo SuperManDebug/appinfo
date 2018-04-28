@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.dao.DataDictionaryDao">
+  <resultMap id="BaseResultMap" type="com.app.pojo.DataDictionary">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="typeCode" jdbcType="VARCHAR" property="typecode" />
+    <result column="typeName" jdbcType="VARCHAR" property="typename" />
+    <result column="valueId" jdbcType="BIGINT" property="valueid" />
+    <result column="valueName" jdbcType="VARCHAR" property="valuename" />
+    <result column="createdBy" jdbcType="BIGINT" property="createdby" />
+    <result column="creationDate" jdbcType="TIMESTAMP" property="creationdate" />
+    <result column="modifyBy" jdbcType="BIGINT" property="modifyby" />
+    <result column="modifyDate" jdbcType="TIMESTAMP" property="modifydate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, typeCode, typeName, valueId, valueName, createdBy, creationDate, modifyBy, modifyDate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from data_dictionary
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selDataDictionaries" resultType="DataDictionary">
+  	SELECT * FROM `data_dictionary` WHERE typecode = #{typecode}
+  </select>
+  
+</mapper>

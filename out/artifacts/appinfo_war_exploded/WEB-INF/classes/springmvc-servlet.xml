@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"    
+    xmlns:p="http://www.springframework.org/schema/p"    
+    xmlns:mvc="http://www.springframework.org/schema/mvc"    
+    xmlns:context="http://www.springframework.org/schema/context"    
+    xmlns:util="http://www.springframework.org/schema/util"    
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd    
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-3.2.xsd    
+    http://www.springframework.org/schema/mvc 
+    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd    
+    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+	
+	<!--注解扫描  -->
+	<context:component-scan base-package="com.app.controller"></context:component-scan>
+	
+	<!--拦截器 -->
+	<!--<mvc:interceptors> -->
+		<!--<mvc:interceptor>-->
+			<!--&lt;!&ndash; 拦截规则 &ndash;&gt;-->
+			<!--<mvc:mapping path="/**" />-->
+			<!--&lt;!&ndash; 排除 &ndash;&gt;-->
+			<!--<mvc:exclude-mapping path="/manager/login" />-->
+			<!--<mvc:exclude-mapping path="/manager/checkLogin" />-->
+			<!--<mvc:exclude-mapping path="/manager/logout" />-->
+			<!--<mvc:exclude-mapping path="/statics/**" />-->
+			<!--&lt;!&ndash;拦截器bean &ndash;&gt;-->
+			<!--<bean class="com.app.tools.SysInterceptor" />-->
+		<!--</mvc:interceptor>-->
+	<!--</mvc:interceptors>-->
+	
+	<!--消息转换器 -->
+	<mvc:annotation-driven conversion-service="myConversionService">
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=utf-8</value>
+					</list>
+				</property>
+			</bean>
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+				<property name="features">
+					<list>
+						<value>WriteDateUseDateFormat</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 日期格式转换 -->
+	<bean id="myConversionService"
+		class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.app.tools.StringToDateConverter">
+					<constructor-arg type="java.lang.String" value="yyyy-MM-dd"></constructor-arg>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!--静态文件处理 -->
+	<mvc:resources location="/statics/" mapping="/statics/**" />
+	
+	<!--请求时追加前后缀  -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!--文件上传-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<property name="maxUploadSize" value="314572800"></property>
+	</bean>
+</beans>
